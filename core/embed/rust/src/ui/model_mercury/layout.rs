@@ -51,8 +51,10 @@ use crate::{
         },
         model_mercury::{
             component::{check_homescreen_format, SwipeContent},
-            flow::new_confirm_action_simple,
-            flow::util::ConfirmBlobParams,
+            flow::{
+                new_confirm_action_simple,
+                util::{ConfirmBlobParams, ShowInfoParams},
+            },
             theme::ICON_BULLET_CHECKMARK,
         },
     },
@@ -485,8 +487,9 @@ extern "C" fn new_confirm_output(n_args: usize, args: *const Obj, kwargs: *mut M
         let address_title: Option<TString> =
             kwargs.get(Qstr::MP_QSTR_address_title)?.try_into_option()?;
 
-        let summary_items: Obj = kwargs.get(Qstr::MP_QSTR_summary_items)?;
-        let fee_items: Obj = kwargs.get(Qstr::MP_QSTR_fee_items)?;
+        let summary_items: Option<Obj> =
+            kwargs.get(Qstr::MP_QSTR_summary_items)?.try_into_option()?;
+        let fee_items: Option<Obj> = kwargs.get(Qstr::MP_QSTR_fee_items)?.try_into_option()?;
 
         let summary_title: Option<TString> =
             kwargs.get(Qstr::MP_QSTR_summary_title)?.try_into_option()?;
@@ -500,22 +503,72 @@ extern "C" fn new_confirm_output(n_args: usize, args: *const Obj, kwargs: *mut M
         let cancel_text: Option<TString> =
             kwargs.get(Qstr::MP_QSTR_cancel_text)?.try_into_option()?;
 
+        let main_params = ConfirmBlobParams::new(title.unwrap_or(TString::empty()), message, None)
+            .with_subtitle(subtitle)
+            .with_menu_button()
+            .with_footer(TR::instructions__swipe_up.into(), None)
+            .with_chunkify(chunkify)
+            .with_text_mono(text_mono)
+            .with_swipe_up();
+
+        let content_amount_params = amount.map(|amount| {
+            ConfirmBlobParams::new(TR::words__amount.into(), amount, None)
+                .with_subtitle(subtitle)
+                .with_menu_button()
+                .with_footer(TR::instructions__swipe_up.into(), None)
+                .with_text_mono(text_mono)
+                .with_swipe_up()
+                .with_swipe_down()
+        });
+
+        let address_params = address.map(|address| {
+            ConfirmBlobParams::new(
+                address_title.unwrap_or(TR::words__address.into()),
+                address,
+                None,
+            )
+            .with_cancel_button()
+            .with_chunkify(true)
+            .with_text_mono(true)
+            .with_swipe_right()
+        });
+
+        let mut fee_items_params =
+            ShowInfoParams::new(TR::confirm_total__title_fee.into()).with_cancel_button();
+        if fee_items.is_some() {
+            for pair in IterBuf::new().try_iterate(fee_items.unwrap())? {
+                let [label, value]: [TString; 2] = util::iter_into_array(pair)?;
+                fee_items_params = unwrap!(fee_items_params.add(label, value));
+            }
+        }
+
+        let summary_items_params: Option<ShowInfoParams> = if summary_items.is_some() {
+            let mut summary =
+                ShowInfoParams::new(summary_title.unwrap_or(TR::words__title_summary.into()))
+                    .with_menu_button()
+                    .with_footer(TR::instructions__swipe_up.into(), None)
+                    .with_swipe_up()
+                    .with_swipe_down();
+            for pair in IterBuf::new().try_iterate(summary_items.unwrap())? {
+                let [label, value]: [TString; 2] = util::iter_into_array(pair)?;
+                summary = unwrap!(summary.add(label, value));
+            }
+            Some(summary)
+        } else {
+            None
+        };
+
         let flow = flow::confirm_output::new_confirm_output(
-            title,
-            subtitle,
+            main_params,
             account,
             account_path,
             br_name,
             br_code,
-            message,
-            amount,
-            chunkify,
-            text_mono,
-            address,
+            content_amount_params,
+            address_params,
             address_title,
-            summary_items,
-            fee_items,
-            summary_title,
+            summary_items_params,
+            fee_items_params,
             summary_br_name,
             summary_br_code,
             cancel_text,
@@ -536,11 +589,33 @@ extern "C" fn new_confirm_summary(n_args: usize, args: *const Obj, kwargs: *mut 
         let cancel_text: Option<TString> =
             kwargs.get(Qstr::MP_QSTR_cancel_text)?.try_into_option()?;
 
-        let flow = flow::confirm_summary::new_confirm_summary(
-            title,
-            items,
-            account_items,
-            fee_items,
+        let mut summary_params = ShowInfoParams::new(title.clone())
+            .with_menu_button()
+            .with_footer(TR::instructions__swipe_up.into(), None)
+            .with_swipe_up();
+        for pair in IterBuf::new().try_iterate(items)? {
+            let [label, value]: [TString; 2] = util::iter_into_array(pair)?;
+            summary_params = unwrap!(summary_params.add(label, value));
+        }
+
+        let mut account_params =
+            ShowInfoParams::new(TR::send__send_from.into()).with_cancel_button();
+        for pair in IterBuf::new().try_iterate(account_items)? {
+            let [label, value]: [TString; 2] = util::iter_into_array(pair)?;
+            account_params = unwrap!(account_params.add(label, value));
+        }
+
+        let mut fee_params =
+            ShowInfoParams::new(TR::confirm_total__title_fee.into()).with_cancel_button();
+        for pair in IterBuf::new().try_iterate(fee_items)? {
+            let [label, value]: [TString; 2] = util::iter_into_array(pair)?;
+            fee_params = unwrap!(fee_params.add(label, value));
+        }
+
+        let flow = flow::new_confirm_summary(
+            summary_params,
+            account_params,
+            fee_params,
             br_name,
             br_code,
             cancel_text,
