@@ -25,6 +25,7 @@ from ..helpers.paths import SCHEMA_STAKING
 from ..helpers.utils import derive_public_key
 
 if TYPE_CHECKING:
+    from enum import IntEnum
     from typing import Any, Awaitable, ClassVar
 
     from trezor.enums import CardanoAddressType
@@ -35,6 +36,9 @@ if TYPE_CHECKING:
     from ..helpers.hash_builder_collection import HashBuilderEmbeddedCBOR
 
     CardanoTxResponseType = CardanoTxItemAck | messages.CardanoTxWitnessResponse
+else:
+    IntEnum = object
+
 
 _MINTING_POLICY_ID_LENGTH = const(28)
 _MAX_ASSET_NAME_LENGTH = const(32)
@@ -67,6 +71,12 @@ _DATUM_OPTION_KEY_INLINE = const(1)
 _POOL_REGISTRATION_CERTIFICATE_ITEMS_COUNT = const(10)
 
 _MAX_CHUNK_SIZE = const(1024)
+
+
+class SuiteTxType(IntEnum):
+    SIMPLE_SEND = 0
+    SIMPLE_STAKE = 1
+    NOT_SUITE_TX = 2
 
 
 class Signer:
@@ -117,6 +127,7 @@ class Signer:
             tx_dict_items_count, ProcessError("Invalid tx signing request")
         )
 
+        self.suite_tx_type = SuiteTxType.NOT_SUITE_TX
         self.should_show_details = False
 
     async def sign(self) -> None:
@@ -235,6 +246,7 @@ class Signer:
         ):
             raise ProcessError("Total collateral is out of range!")
         validate_network_info(msg.network_id, msg.protocol_magic)
+
 
     async def _show_tx_init(self) -> None:
         self.should_show_details = await layout.show_tx_init(self.SIGNING_MODE_TITLE)
@@ -373,6 +385,10 @@ class Signer:
             assert output.address is not None  # _validate_output
             address = output.address
 
+        if self.suite_tx_type == SuiteTxType.SIMPLE_SEND:
+            output_type = n
+        else:
+            output_type = "change" if self._is_change_output(output) else "address"
         await layout.confirm_sending(
             output.amount,
             address,
