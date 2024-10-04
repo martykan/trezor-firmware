@@ -1208,6 +1208,26 @@ if not utils.BITCOIN_ONLY:
             br_code=br_code,
         )
 
+    def confirm_cardano_tx(
+        amount: str,
+        fee: str,
+        items: Iterable[tuple[str, str]],
+        amount_title: str | None = None,
+        fee_title: str | None = None,
+        br_name: str = "confirm_cardano_tx",
+        br_code: ButtonRequestType = ButtonRequestType.SignTx,
+    ) -> Awaitable[None]:
+        amount_title = (
+            amount_title if amount_title is not None else f"{TR.words__amount}:"
+        )  # def_arg
+        fee_title = fee_title or TR.words__fee  # def_arg
+        return _confirm_summary(
+            ((amount_title, amount), (fee_title, fee)),
+            info_items=items,
+            br_name=br_name,
+            br_code=br_code,
+        )
+
 
 def confirm_joint_total(spending_amount: str, total_amount: str) -> Awaitable[None]:
     return raise_if_not_confirmed(

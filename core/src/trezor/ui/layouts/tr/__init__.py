@@ -1228,6 +1228,7 @@ if not utils.BITCOIN_ONLY:
                         amount_value=amount_value,
                         fee_title=f"{TR.send__maximum_fee}:",
                         fee_value=maximum_fee,
+                        items_title=TR.confirm_total__title_fee,
                         items=[(f"{k}:", v) for (k, v) in info_items],
                         cancel_cross=True,
                     )
@@ -1258,6 +1259,38 @@ if not utils.BITCOIN_ONLY:
                         amount_value=amount,
                         fee_title=fee_title,
                         fee_value=fee,
+                        items_title=TR.confirm_total__title_fee,
+                        items=items,
+                        cancel_cross=True,
+                    )
+                ),
+                br_name=br_name,
+                br_code=br_code,
+            )
+        )
+
+    def confirm_cardano_tx(
+        amount: str,
+        fee: str,
+        items: Iterable[tuple[str, str]],
+        amount_title: str | None = None,
+        fee_title: str | None = None,
+        br_name: str = "confirm_cardano_tx",
+        br_code: ButtonRequestType = ButtonRequestType.SignTx,
+    ) -> Awaitable[None]:
+        amount_title = (
+            amount_title if amount_title is not None else f"{TR.words__amount}:"
+        )  # def_arg
+        fee_title = fee_title or TR.words__fee  # def_arg
+        return raise_if_not_confirmed(
+            interact(
+                RustLayout(
+                    trezorui2.altcoin_tx_summary(
+                        amount_title=amount_title,
+                        amount_value=amount,
+                        fee_title=fee_title,
+                        fee_value=fee,
+                        items_title=TR.words__title_information,
                         items=items,
                         cancel_cross=True,
                     )
@@ -1284,6 +1317,7 @@ if not utils.BITCOIN_ONLY:
                 amount_value=total_amount,
                 fee_title=f"{TR.send__maximum_fee}:",
                 fee_value=maximum_fee,
+                items_title=TR.confirm_total__title_fee,
                 items=[(f"{k}:", v) for (k, v) in fee_info_items],
             )
         )
