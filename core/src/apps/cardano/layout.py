@@ -224,8 +224,11 @@ async def confirm_sending(
 ) -> None:
     output_index_shown = None
     if output_type == "address":
-        title = TR.cardano__sending
-        output_index_shown = output_index if output_index is not None else None
+        if output_index is None:
+            title = TR.cardano__sending
+        else:
+            title = None
+            output_index_shown = output_index
     elif output_type == "change":
         title = TR.cardano__change_output
     elif output_type == "collateral-return":
