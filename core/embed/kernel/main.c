@@ -183,24 +183,26 @@ extern uint32_t _coreapp_clear_ram_1_size;
 
 // Initializes coreapp applet
 static void coreapp_init(applet_t *applet) {
-  applet_header_t *coreapp_header =
-      (applet_header_t *)COREAPP_CODE_ALIGN(KERNEL_START + KERNEL_SIZE);
+  const uint32_t CODE1_START = COREAPP_CODE_ALIGN(KERNEL_START + KERNEL_SIZE);
+
+#ifdef FIRMWARE_P1_START
+  const uint32_t CODE1_END = FIRMWARE_P1_START + FIRMWARE_P1_MAXSIZE;
+#else
+  const uint32_t CODE1_END = FIRMWARE_START + FIRMWARE_MAXSIZE;
+#endif
+
+  applet_header_t *coreapp_header = (applet_header_t *)CODE1_START;
 
   applet_layout_t coreapp_layout = {
       .data1.start = (uint32_t)&_coreapp_clear_ram_0_start,
       .data1.size = (uint32_t)&_coreapp_clear_ram_0_size,
       .data2.start = (uint32_t)&_coreapp_clear_ram_1_start,
       .data2.size = (uint32_t)&_coreapp_clear_ram_1_size,
-#ifdef FIRMWARE_P1_START
-      .code1.start = FIRMWARE_P1_START + KERNEL_SIZE,
-      .code1.size = FIRMWARE_P1_MAXSIZE - KERNEL_SIZE,
+      .code1.start = CODE1_START,
+      .code1.size = CODE1_END - CODE1_START,
+#ifdef FIRMWARE_P2_START
       .code2.start = FIRMWARE_P2_START,
       .code2.size = FIRMWARE_P2_MAXSIZE,
-#else
-      .code1.start = FIRMWARE_START + KERNEL_SIZE,
-      .code1.size = FIRMWARE_MAXSIZE - KERNEL_SIZE,
-      .code2.start = 0,
-      .code2.size = 0,
 #endif
   };
 
