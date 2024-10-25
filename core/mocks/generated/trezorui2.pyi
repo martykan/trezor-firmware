@@ -1463,6 +1463,7 @@ def confirm_more(
     *,
     title: str,
     button: str,
+    button_style_confirm: bool = False,
     items: Iterable[tuple[int, str | bytes]],
 ) -> LayoutObj[UiResult]:
     """Confirm long content with the possibility to go back from any page.

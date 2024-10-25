@@ -455,10 +455,11 @@ def test_signtx_data_pagination(client: Client, flow):
         client.set_input_flow(flow(client))
         _sign_tx_call()
 
-    with client, pytest.raises(exceptions.Cancelled):
-        client.watch_layout()
-        client.set_input_flow(flow(client, cancel=True))
-        _sign_tx_call()
+    if flow is not input_flow_data_scroll_down:
+        with client, pytest.raises(exceptions.Cancelled):
+            client.watch_layout()
+            client.set_input_flow(flow(client, cancel=True))
+            _sign_tx_call()
 
 
 @pytest.mark.models("core")

@@ -1161,6 +1161,8 @@ extern "C" fn new_confirm_more(n_args: usize, args: *const Obj, kwargs: *mut Map
     let block = move |_args: &[Obj], kwargs: &Map| {
         let title: TString = kwargs.get(Qstr::MP_QSTR_title)?.try_into()?;
         let button: TString = kwargs.get(Qstr::MP_QSTR_button)?.try_into()?;
+        let button_style_confirm: bool =
+            kwargs.get_or(Qstr::MP_QSTR_button_style_confirm, false)?;
         let items: Obj = kwargs.get(Qstr::MP_QSTR_items)?;
 
         let mut paragraphs = ParagraphVecLong::new();
@@ -1177,7 +1179,11 @@ extern "C" fn new_confirm_more(n_args: usize, args: *const Obj, kwargs: *mut Map
             title,
             ButtonPage::new(paragraphs.into_paragraphs(), theme::BG)
                 .with_cancel_confirm(None, Some(button))
-                .with_confirm_style(theme::button_default())
+                .with_confirm_style(if button_style_confirm {
+                    theme::button_confirm()
+                } else {
+                    theme::button_default()
+                })
                 .with_back_button(),
         ))?;
         Ok(obj.into())
@@ -1988,6 +1994,7 @@ pub static mp_module_trezorui2: Module = obj_module! {
     ///     *,
     ///     title: str,
     ///     button: str,
+    ///     button_style_confirm: bool = False,
     ///     items: Iterable[tuple[int, str | bytes]],
     /// ) -> LayoutObj[UiResult]:
     ///     """Confirm long content with the possibility to go back from any page.

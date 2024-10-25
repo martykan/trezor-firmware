@@ -355,11 +355,15 @@ class EthereumFlow:
         br = yield
         TR.assert_equals(self.debug.wait_layout().title(), "ethereum__title_input_data")
         assert br.pages is not None
-        for i in range(br.pages):
-            self.debug.wait_layout()
-            if i < br.pages - 1:
-                self.debug.swipe_up()
-        self.debug.press_yes()
+        if self.client.layout_type is LayoutType.TR:
+            for i in range(br.pages):
+                if i < br.pages - 1:
+                    self.debug.press_right()
+        else:
+            for i in range(br.pages):
+                self.debug.wait_layout()
+                if i < br.pages - 1:
+                    self.debug.click(buttons.OK)
 
     def paginate_data_go_back(self) -> BRGeneratorType:
         br = yield
@@ -419,7 +423,7 @@ class EthereumFlow:
 
                 yield
         elif self.client.layout_type is LayoutType.TR:
-            TR.assert_equals(self.debug.wait_layout().title(), "words__recipient")
+            TR.assert_equals(self.debug.wait_layout().title(), "ethereum__interaction_contract")
             if cancel:
                 self.debug.press_left()
             else:

@@ -885,7 +885,8 @@ async def _confirm_ask_pagination(
             paginated = RustLayout(
                 trezorui2.confirm_more(
                     title=title,
-                    button=TR.buttons__close,
+                    button=TR.buttons__confirm,
+                    button_style_confirm=True,
                     items=[(ui.MONO, data)],
                 )
             )
@@ -894,6 +895,8 @@ async def _confirm_ask_pagination(
 
         result = await interact(paginated, br_name, br_code)
         assert result in (CONFIRMED, CANCELLED)
+        if result is CONFIRMED:
+            return
 
     assert False
 
