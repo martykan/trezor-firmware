@@ -99,7 +99,8 @@ class Signer:
 
         self.msg = msg
         self.keychain = keychain
-        self.total_amount = 0  # sum of output amounts
+        self.total_out = 0  # sum of output amounts
+        self.change_out = 0  # sum of change amounts
 
         self.account_path_checker = AccountPathChecker()
 
@@ -287,10 +288,11 @@ class Signer:
                 CardanoTxItemAck(), CardanoTxOutput
             )
             await self._process_output(outputs_list, output, output_index)
+            self.total_out += output.amount
+            if self._is_change_output(output):
+                self.change_out += output.amount
 
-            self.total_amount += output.amount
-
-        if self.total_amount > LOVELACE_MAX_SUPPLY:
+        if self.total_out > LOVELACE_MAX_SUPPLY:
             raise ProcessError("Total transaction amount is out of range!")
 
     async def _process_output(
