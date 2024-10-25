@@ -513,14 +513,14 @@ async def confirm_witness_request(
 
 
 async def confirm_tx(
-    amount: int,
+    spending: int,
     fee: int,
     network_id: int,
     protocol_magic: int,
     ttl: int | None,
     validity_interval_start: int | None,
 ) -> None:
-    total_amount = format_coin_amount(amount, network_id)
+    total_amount = format_coin_amount(spending, network_id)
     fee_amount = format_coin_amount(fee, network_id)
     items = (
         (TR.cardano__network, f"{protocol_magics.to_ui_string(protocol_magic)}"),
@@ -532,8 +532,6 @@ async def confirm_tx(
         total_amount,
         fee_amount,
         items=items,
-        amount_title=TR.send__total_amount,
-        fee_title=TR.send__including_fee,
     )
 
 
