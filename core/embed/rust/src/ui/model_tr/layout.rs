@@ -48,7 +48,7 @@ use crate::{
         layout::{
             obj::{ComponentMsgObj, LayoutObj},
             result::{CANCELLED, CONFIRMED, INFO},
-            util::{upy_disable_animation, ConfirmBlob, RecoveryType},
+            util::{ConfirmBlob, RecoveryType},
         },
         model_tr::component::check_homescreen_format,
     },
@@ -1548,10 +1548,6 @@ pub static mp_module_trezorui2: Module = obj_module! {
     /// from trezorui_api import *
     ///
     Qstr::MP_QSTR___name__ => Qstr::MP_QSTR_trezorui2.to_obj(),
-
-    /// def disable_animation(disable: bool) -> None:
-    ///     """Disable animations, debug builds only."""
-    Qstr::MP_QSTR_disable_animation => obj_fn_1!(upy_disable_animation).as_obj(),
 
     /// def check_homescreen_format(data: bytes) -> bool:
     ///     """Check homescreen format and dimensions."""

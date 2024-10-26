@@ -1,6 +1,6 @@
 use crate::{
     micropython::{
-        macros::{obj_fn_kw, obj_module},
+        macros::{obj_fn_1, obj_fn_kw, obj_module},
         map::Map,
         module::Module,
         obj::Obj,
@@ -13,7 +13,7 @@ use crate::{
         layout::{
             base::LAYOUT_STATE,
             obj::{LayoutObj, ATTACH_TYPE_OBJ},
-            result::{CANCELLED, CONFIRMED, INFO},
+            result::{CANCELLED, CONFIRMED, INFO}, util::upy_disable_animation,
         },
         ui_features::ModelUI,
         ui_features_fw::UIFeaturesFirmware,
@@ -22,6 +22,7 @@ use crate::{
 
 // free-standing functions exported to MicroPython mirror `trait
 // UIFeaturesFirmware`
+// NOTE: `disable_animation` not a part of trait UiFeaturesFirmware
 
 extern "C" fn new_request_bip39(n_args: usize, args: *const Obj, kwargs: *mut Map) -> Obj {
     let block = move |_args: &[Obj], kwargs: &Map| {
@@ -181,6 +182,10 @@ pub static mp_module_trezorui_api: Module = obj_module! {
 
     /// INFO: UiResult
     Qstr::MP_QSTR_INFO => INFO.as_obj(),
+
+    /// def disable_animation(disable: bool) -> None:
+    ///     """Disable animations, debug builds only."""
+    Qstr::MP_QSTR_disable_animation => obj_fn_1!(upy_disable_animation).as_obj(),
 
     /// def request_bip39(
     ///     *,

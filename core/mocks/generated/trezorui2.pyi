@@ -4,11 +4,6 @@ from trezorui_api import *
 
 
 # rust/src/ui/model_mercury/layout.rs
-def disable_animation(disable: bool) -> None:
-    """Disable animations, debug builds only."""
-
-
-# rust/src/ui/model_mercury/layout.rs
 def check_homescreen_format(data: bytes) -> bool:
     """Check homescreen format and dimensions."""
 
@@ -498,11 +493,6 @@ from trezorui_api import *
 
 
 # rust/src/ui/model_tr/layout.rs
-def disable_animation(disable: bool) -> None:
-    """Disable animations, debug builds only."""
-
-
-# rust/src/ui/model_tr/layout.rs
 def check_homescreen_format(data: bytes) -> bool:
     """Check homescreen format and dimensions."""
 
@@ -905,11 +895,6 @@ def show_wait_text(message: str, /) -> None:
     """Show single-line text in the middle of the screen."""
 from trezor import utils
 from trezorui_api import *
-
-
-# rust/src/ui/model_tt/layout.rs
-def disable_animation(disable: bool) -> None:
-    """Disable animations, debug builds only."""
 
 
 # rust/src/ui/model_tt/layout.rs
