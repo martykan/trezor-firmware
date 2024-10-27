@@ -271,42 +271,6 @@ fn content_in_button_page<T: Component + Paginate + MaybeTrace + 'static>(
     Ok(obj.into())
 }
 
-extern "C" fn new_confirm_action(n_args: usize, args: *const Obj, kwargs: *mut Map) -> Obj {
-    let block = |_args: &[Obj], kwargs: &Map| {
-        let title: TString = kwargs.get(Qstr::MP_QSTR_title)?.try_into()?;
-        let action: Option<TString> = kwargs.get(Qstr::MP_QSTR_action)?.try_into_option()?;
-        let description: Option<TString> =
-            kwargs.get(Qstr::MP_QSTR_description)?.try_into_option()?;
-        let verb: TString<'static> =
-            kwargs.get_or(Qstr::MP_QSTR_verb, TR::buttons__confirm.into())?;
-        let verb_cancel: Option<TString<'static>> = kwargs
-            .get(Qstr::MP_QSTR_verb_cancel)
-            .unwrap_or_else(|_| Obj::const_none())
-            .try_into_option()?;
-        let reverse: bool = kwargs.get_or(Qstr::MP_QSTR_reverse, false)?;
-        let hold: bool = kwargs.get_or(Qstr::MP_QSTR_hold, false)?;
-
-        let paragraphs = {
-            let action = action.unwrap_or("".into());
-            let description = description.unwrap_or("".into());
-            let mut paragraphs = ParagraphVecShort::new();
-            if !reverse {
-                paragraphs
-                    .add(Paragraph::new(&theme::TEXT_BOLD, action))
-                    .add(Paragraph::new(&theme::TEXT_NORMAL, description));
-            } else {
-                paragraphs
-                    .add(Paragraph::new(&theme::TEXT_NORMAL, description))
-                    .add(Paragraph::new(&theme::TEXT_BOLD, action));
-            }
-            paragraphs.into_paragraphs()
-        };
-
-        content_in_button_page(title, paragraphs, verb, verb_cancel, hold)
-    };
-    unsafe { util::try_with_args_and_kwargs(n_args, args, kwargs, block) }
-}
-
 extern "C" fn new_confirm_blob(n_args: usize, args: *const Obj, kwargs: *mut Map) -> Obj {
     let block = move |_args: &[Obj], kwargs: &Map| {
         let title: TString = kwargs.get(Qstr::MP_QSTR_title)?.try_into()?;
@@ -1552,23 +1516,6 @@ pub static mp_module_trezorui2: Module = obj_module! {
     /// def check_homescreen_format(data: bytes) -> bool:
     ///     """Check homescreen format and dimensions."""
     Qstr::MP_QSTR_check_homescreen_format => obj_fn_1!(upy_check_homescreen_format).as_obj(),
-
-    /// def confirm_action(
-    ///     *,
-    ///     title: str,
-    ///     action: str | None,
-    ///     description: str | None,
-    ///     subtitle: str | None = None,
-    ///     verb: str = "CONFIRM",
-    ///     verb_cancel: str | None = None,
-    ///     hold: bool = False,
-    ///     hold_danger: bool = False,  # unused on TR
-    ///     reverse: bool = False,
-    ///     prompt_screen: bool = False,
-    ///     prompt_title: str | None = None,
-    /// ) -> LayoutObj[UiResult]:
-    ///     """Confirm action."""
-    Qstr::MP_QSTR_confirm_action => obj_fn_kw!(0, new_confirm_action).as_obj(),
 
     /// def confirm_homescreen(
     ///     *,

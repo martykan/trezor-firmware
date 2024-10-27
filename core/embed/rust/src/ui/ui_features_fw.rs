@@ -2,7 +2,22 @@ use crate::{error::Error, micropython::gc::Gc, strutil::TString};
 
 use super::layout::obj::{LayoutMaybeTrace, LayoutObj};
 
+
 pub trait UIFeaturesFirmware {
+    fn confirm_action(
+        title: TString<'static>,
+        action: Option<TString<'static>>,
+        description: Option<TString<'static>>,
+        subtitle: Option<TString<'static>>,
+        verb: Option<TString<'static>>,
+        verb_cancel: Option<TString<'static>>,
+        hold: bool,
+        hold_danger: bool,
+        reverse: bool,
+        prompt_screen: bool,
+        prompt_title: Option<TString<'static>>,
+    ) -> Result<impl LayoutMaybeTrace, Error>;
+
     fn request_bip39(
         prompt: TString<'static>,
         prefill_word: TString<'static>,

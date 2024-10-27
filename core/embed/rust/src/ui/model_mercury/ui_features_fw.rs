@@ -17,10 +17,37 @@ use crate::{
 use super::{
     component::{
         Bip39Input, Frame, MnemonicKeyboard, PinKeyboard, Slip39Input, SwipeContent, SwipeUpScreen,
-    }, flow, theme, ModelMercuryFeatures
+    },
+    flow, theme, ModelMercuryFeatures,
 };
 
 impl UIFeaturesFirmware for ModelMercuryFeatures {
+    fn confirm_action(
+        title: TString<'static>,
+        action: Option<TString<'static>>,
+        description: Option<TString<'static>>,
+        subtitle: Option<TString<'static>>,
+        verb: Option<TString<'static>>,
+        verb_cancel: Option<TString<'static>>,
+        hold: bool,
+        hold_danger: bool,
+        reverse: bool,
+        prompt_screen: bool,
+        prompt_title: Option<TString<'static>>,
+    ) -> Result<impl LayoutMaybeTrace, Error> {
+        let flow = flow::confirm_action::new_confirm_action(
+            title,
+            action,
+            description,
+            subtitle,
+            verb_cancel,
+            reverse,
+            hold,
+            prompt_screen,
+            prompt_title.unwrap_or(TString::empty()),
+        )?;
+        Ok(flow)
+    }
     fn request_bip39(
         prompt: TString<'static>,
         prefill_word: TString<'static>,

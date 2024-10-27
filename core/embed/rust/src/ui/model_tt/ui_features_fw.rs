@@ -4,7 +4,11 @@ use crate::{
     strutil::TString,
     translations::TR,
     ui::{
-        component::{image::BlendedImage, ComponentExt, Empty, Timeout},
+        component::{
+            image::BlendedImage,
+            text::paragraphs::{Paragraph, ParagraphSource, ParagraphVecShort, VecExt},
+            ComponentExt, Empty, Timeout,
+        },
         layout::obj::{LayoutMaybeTrace, LayoutObj, RootComponent},
         ui_features_fw::UIFeaturesFirmware,
     },
@@ -12,13 +16,54 @@ use crate::{
 
 use super::{
     component::{
-        Bip39Input, Button, ButtonMsg, ButtonStyleSheet, CancelConfirmMsg, IconDialog,
-        MnemonicKeyboard, PassphraseKeyboard, PinKeyboard, Slip39Input,
+        Bip39Input, Button, ButtonMsg, ButtonPage, ButtonStyleSheet, CancelConfirmMsg, Frame,
+        IconDialog, MnemonicKeyboard, PassphraseKeyboard, PinKeyboard, Slip39Input,
     },
     theme, ModelTTFeatures,
 };
 
 impl UIFeaturesFirmware for ModelTTFeatures {
+    fn confirm_action(
+        title: TString<'static>,
+        action: Option<TString<'static>>,
+        description: Option<TString<'static>>,
+        subtitle: Option<TString<'static>>,
+        verb: Option<TString<'static>>,
+        verb_cancel: Option<TString<'static>>,
+        hold: bool,
+        hold_danger: bool,
+        reverse: bool,
+        prompt_screen: bool,
+        prompt_title: Option<TString<'static>>,
+    ) -> Result<impl LayoutMaybeTrace, Error> {
+        let paragraphs = {
+            let action = action.unwrap_or("".into());
+            let description = description.unwrap_or("".into());
+            let mut paragraphs = ParagraphVecShort::new();
+            if !reverse {
+                paragraphs
+                    .add(Paragraph::new(&theme::TEXT_DEMIBOLD, action))
+                    .add(Paragraph::new(&theme::TEXT_NORMAL, description));
+            } else {
+                paragraphs
+                    .add(Paragraph::new(&theme::TEXT_NORMAL, description))
+                    .add(Paragraph::new(&theme::TEXT_DEMIBOLD, action));
+            }
+            paragraphs.into_paragraphs()
+        };
+
+        let mut page = if hold {
+            ButtonPage::new(paragraphs, theme::BG).with_hold()?
+        } else {
+            ButtonPage::new(paragraphs, theme::BG).with_cancel_confirm(verb_cancel, verb)
+        };
+        if hold && hold_danger {
+            page = page.with_confirm_style(theme::button_danger())
+        }
+        let layout = RootComponent::new(Frame::left_aligned(theme::label_title(), title, page));
+        Ok(layout)
+    }
+
     fn request_bip39(
         prompt: TString<'static>,
         prefill_word: TString<'static>,

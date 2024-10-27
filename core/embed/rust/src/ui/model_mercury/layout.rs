@@ -289,35 +289,6 @@ extern "C" fn new_confirm_blob(n_args: usize, args: *const Obj, kwargs: *mut Map
     unsafe { util::try_with_args_and_kwargs(n_args, args, kwargs, block) }
 }
 
-extern "C" fn new_confirm_action(n_args: usize, args: *const Obj, kwargs: *mut Map) -> Obj {
-    let block = move |_args: &[Obj], kwargs: &Map| {
-        let title: TString = kwargs.get(Qstr::MP_QSTR_title)?.try_into()?;
-        let action: Option<TString> = kwargs.get(Qstr::MP_QSTR_action)?.try_into_option()?;
-        let description: Option<TString> =
-            kwargs.get(Qstr::MP_QSTR_description)?.try_into_option()?;
-        let subtitle: Option<TString> = kwargs.get(Qstr::MP_QSTR_subtitle)?.try_into_option()?;
-        let verb_cancel: Option<TString> =
-            kwargs.get(Qstr::MP_QSTR_verb_cancel)?.try_into_option()?;
-        let reverse: bool = kwargs.get_or(Qstr::MP_QSTR_reverse, false)?;
-        let hold: bool = kwargs.get_or(Qstr::MP_QSTR_hold, false)?;
-        let prompt_screen: bool = kwargs.get_or(Qstr::MP_QSTR_prompt_screen, false)?;
-        let prompt_title: TString = kwargs.get_or(Qstr::MP_QSTR_prompt_title, title.clone())?;
-
-        let flow = flow::confirm_action::new_confirm_action(
-            title,
-            action,
-            description,
-            subtitle,
-            verb_cancel,
-            reverse,
-            hold,
-            prompt_screen,
-            prompt_title,
-        )?;
-        Ok(LayoutObj::new_root(flow)?.into())
-    };
-    unsafe { util::try_with_args_and_kwargs(n_args, args, kwargs, block) }
-}
 extern "C" fn new_confirm_address(n_args: usize, args: *const Obj, kwargs: *mut Map) -> Obj {
     let block = move |_args: &[Obj], kwargs: &Map| {
         let title: TString = kwargs.get(Qstr::MP_QSTR_title)?.try_into()?;
@@ -1402,23 +1373,6 @@ pub static mp_module_trezorui2: Module = obj_module! {
     ///     """Check homescreen format and dimensions."""
     Qstr::MP_QSTR_check_homescreen_format => obj_fn_1!(upy_check_homescreen_format).as_obj(),
 
-    /// def confirm_action(
-    ///     *,
-    ///     title: str,
-    ///     action: str | None,
-    ///     description: str | None,
-    ///     subtitle: str | None = None,
-    ///     verb: str | None = None,
-    ///     verb_cancel: str | None = None,
-    ///     hold: bool = False,
-    ///     hold_danger: bool = False,
-    ///     reverse: bool = False,
-    ///     prompt_screen: bool = False,
-    ///     prompt_title: str | None = None,
-    /// ) -> LayoutObj[UiResult]:
-    ///     """Confirm action."""
-    Qstr::MP_QSTR_confirm_action => obj_fn_kw!(0, new_confirm_action).as_obj(),
-
     /// def confirm_emphasized(
     ///     *,
     ///     title: str,
@@ -1842,5 +1796,5 @@ pub static mp_module_trezorui2: Module = obj_module! {
     ///     cancel_text: str | None = None,
     /// ) -> LayoutObj[UiResult]:
     ///     """Total summary and hold to confirm."""
-    Qstr::MP_QSTR_flow_confirm_summary => obj_fn_kw!(0, flow::new_confirm_summary).as_obj(),
+    Qstr::MP_QSTR_flow_confirm_summary => obj_fn_kw!(0, new_confirm_summary).as_obj(),
 };
