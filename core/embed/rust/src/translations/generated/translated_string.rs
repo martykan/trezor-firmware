@@ -1376,7 +1376,7 @@ pub enum TranslatedString {
     #[cfg(feature = "universal_fw")]
     ethereum__token_contract = 970,  // "Token contract"
     buttons__view_all_data = 971,  // "View all data"
-    words__view_all_data_from_menu = 972,  // "View all data from menu."
+    words__view_all_data_from_menu = 972,  // "View all data in the menu."
     #[cfg(feature = "universal_fw")]
     ethereum__interaction_contract = 973,  // "Interaction contract"
 }
@@ -2749,7 +2749,7 @@ impl TranslatedString {
             #[cfg(feature = "universal_fw")]
             Self::ethereum__token_contract => "Token contract",
             Self::buttons__view_all_data => "View all data",
-            Self::words__view_all_data_from_menu => "View all data from menu.",
+            Self::words__view_all_data_from_menu => "View all data in the menu.",
             #[cfg(feature = "universal_fw")]
             Self::ethereum__interaction_contract => "Interaction contract",
         }

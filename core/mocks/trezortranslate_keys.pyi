@@ -961,7 +961,7 @@ class TR:
     words__title_threshold: str = "Threshold"
     words__try_again: str = "Try again."
     words__unknown: str = "Unknown"
-    words__view_all_data_from_menu: str = "View all data from menu."
+    words__view_all_data_from_menu: str = "View all data in the menu."
     words__warning: str = "Warning"
     words__writable: str = "Writable"
     words__yes: str = "Yes"
