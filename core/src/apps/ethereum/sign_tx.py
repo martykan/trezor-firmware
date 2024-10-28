@@ -132,7 +132,9 @@ async def confirm_tx_data(
     # Handle ERC-20, currently only 'transfer' function
     token, recipient, value = await _handle_erc20_transfer(msg, defs, address_bytes)
 
-    if data_total_len > 0:
+    is_contract_interaction = token is None and data_total_len > 0
+
+    if is_contract_interaction:
         await require_confirm_other_data(msg.data_initial_chunk, data_total_len)
 
     await require_confirm_tx(
@@ -143,7 +145,7 @@ async def confirm_tx_data(
         fee_items,
         defs.network,
         token,
-        is_contract_interaction=(data_total_len > 0),
+        is_contract_interaction=is_contract_interaction,
         chunkify=bool(msg.chunkify),
     )
 
