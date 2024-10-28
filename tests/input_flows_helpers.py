@@ -423,7 +423,10 @@ class EthereumFlow:
 
                 yield
         elif self.client.layout_type is LayoutType.TR:
-            TR.assert_equals(self.debug.wait_layout().title(), "ethereum__interaction_contract")
+            TR.assert_in_multiple(
+                self.debug.wait_layout().title(),
+                ["ethereum__interaction_contract", "words__recipient"],
+            )
             if cancel:
                 self.debug.press_left()
             else:
