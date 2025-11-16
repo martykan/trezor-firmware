@@ -547,6 +547,20 @@ pub enum MessageType {
     MessageType_TronGetAddress = 2200,
     // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_TronAddress)
     MessageType_TronAddress = 2201,
+    // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_CashuBlindSign)
+    MessageType_CashuBlindSign = 2300,
+    // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_CashuBlindSignResponse)
+    MessageType_CashuBlindSignResponse = 2301,
+    // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_CashuVerifyProofs)
+    MessageType_CashuVerifyProofs = 2302,
+    // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_CashuGetKeysets)
+    MessageType_CashuGetKeysets = 2304,
+    // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_CashuGetKeysetsResponse)
+    MessageType_CashuGetKeysetsResponse = 2305,
+    // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_CashuRotateKeyset)
+    MessageType_CashuRotateKeyset = 2306,
+    // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_CashuRotateKeysetResponse)
+    MessageType_CashuRotateKeysetResponse = 2307,
     // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_BenchmarkListNames)
     MessageType_BenchmarkListNames = 9100,
     // @@protoc_insertion_point(enum_value:hw.trezor.messages.MessageType.MessageType_BenchmarkNames)
@@ -826,6 +840,13 @@ impl ::protobuf::Enum for MessageType {
             2105 => ::std::option::Option::Some(MessageType::MessageType_EvoluDelegatedIdentityKey),
             2200 => ::std::option::Option::Some(MessageType::MessageType_TronGetAddress),
             2201 => ::std::option::Option::Some(MessageType::MessageType_TronAddress),
+            2300 => ::std::option::Option::Some(MessageType::MessageType_CashuBlindSign),
+            2301 => ::std::option::Option::Some(MessageType::MessageType_CashuBlindSignResponse),
+            2302 => ::std::option::Option::Some(MessageType::MessageType_CashuVerifyProofs),
+            2304 => ::std::option::Option::Some(MessageType::MessageType_CashuGetKeysets),
+            2305 => ::std::option::Option::Some(MessageType::MessageType_CashuGetKeysetsResponse),
+            2306 => ::std::option::Option::Some(MessageType::MessageType_CashuRotateKeyset),
+            2307 => ::std::option::Option::Some(MessageType::MessageType_CashuRotateKeysetResponse),
             9100 => ::std::option::Option::Some(MessageType::MessageType_BenchmarkListNames),
             9101 => ::std::option::Option::Some(MessageType::MessageType_BenchmarkNames),
             9102 => ::std::option::Option::Some(MessageType::MessageType_BenchmarkRun),
@@ -1096,6 +1117,13 @@ impl ::protobuf::Enum for MessageType {
             "MessageType_EvoluDelegatedIdentityKey" => ::std::option::Option::Some(MessageType::MessageType_EvoluDelegatedIdentityKey),
             "MessageType_TronGetAddress" => ::std::option::Option::Some(MessageType::MessageType_TronGetAddress),
             "MessageType_TronAddress" => ::std::option::Option::Some(MessageType::MessageType_TronAddress),
+            "MessageType_CashuBlindSign" => ::std::option::Option::Some(MessageType::MessageType_CashuBlindSign),
+            "MessageType_CashuBlindSignResponse" => ::std::option::Option::Some(MessageType::MessageType_CashuBlindSignResponse),
+            "MessageType_CashuVerifyProofs" => ::std::option::Option::Some(MessageType::MessageType_CashuVerifyProofs),
+            "MessageType_CashuGetKeysets" => ::std::option::Option::Some(MessageType::MessageType_CashuGetKeysets),
+            "MessageType_CashuGetKeysetsResponse" => ::std::option::Option::Some(MessageType::MessageType_CashuGetKeysetsResponse),
+            "MessageType_CashuRotateKeyset" => ::std::option::Option::Some(MessageType::MessageType_CashuRotateKeyset),
+            "MessageType_CashuRotateKeysetResponse" => ::std::option::Option::Some(MessageType::MessageType_CashuRotateKeysetResponse),
             "MessageType_BenchmarkListNames" => ::std::option::Option::Some(MessageType::MessageType_BenchmarkListNames),
             "MessageType_BenchmarkNames" => ::std::option::Option::Some(MessageType::MessageType_BenchmarkNames),
             "MessageType_BenchmarkRun" => ::std::option::Option::Some(MessageType::MessageType_BenchmarkRun),
@@ -1365,6 +1393,13 @@ impl ::protobuf::Enum for MessageType {
         MessageType::MessageType_EvoluDelegatedIdentityKey,
         MessageType::MessageType_TronGetAddress,
         MessageType::MessageType_TronAddress,
+        MessageType::MessageType_CashuBlindSign,
+        MessageType::MessageType_CashuBlindSignResponse,
+        MessageType::MessageType_CashuVerifyProofs,
+        MessageType::MessageType_CashuGetKeysets,
+        MessageType::MessageType_CashuGetKeysetsResponse,
+        MessageType::MessageType_CashuRotateKeyset,
+        MessageType::MessageType_CashuRotateKeysetResponse,
         MessageType::MessageType_BenchmarkListNames,
         MessageType::MessageType_BenchmarkNames,
         MessageType::MessageType_BenchmarkRun,
@@ -1640,10 +1675,17 @@ impl ::protobuf::EnumFull for MessageType {
             MessageType::MessageType_EvoluDelegatedIdentityKey => 257,
             MessageType::MessageType_TronGetAddress => 258,
             MessageType::MessageType_TronAddress => 259,
-            MessageType::MessageType_BenchmarkListNames => 260,
-            MessageType::MessageType_BenchmarkNames => 261,
-            MessageType::MessageType_BenchmarkRun => 262,
-            MessageType::MessageType_BenchmarkResult => 263,
+            MessageType::MessageType_CashuBlindSign => 260,
+            MessageType::MessageType_CashuBlindSignResponse => 261,
+            MessageType::MessageType_CashuVerifyProofs => 262,
+            MessageType::MessageType_CashuGetKeysets => 263,
+            MessageType::MessageType_CashuGetKeysetsResponse => 264,
+            MessageType::MessageType_CashuRotateKeyset => 265,
+            MessageType::MessageType_CashuRotateKeysetResponse => 266,
+            MessageType::MessageType_BenchmarkListNames => 267,
+            MessageType::MessageType_BenchmarkNames => 268,
+            MessageType::MessageType_BenchmarkRun => 269,
+            MessageType::MessageType_BenchmarkResult => 270,
         };
         Self::enum_descriptor().value_by_index(index)
     }
@@ -1662,9 +1704,9 @@ impl MessageType {
 }
 
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\x0emessages.proto\x12\x12hw.trezor.messages\x1a\roptions.proto*\xa7\\\
-    \n\x0bMessageType\x12(\n\x16MessageType_Initialize\x10\0\x1a\x0c\x80\xa6\
-    \x1d\x01\xb0\xb5\x18\x01\x90\xb5\x18\x01\x12\x1e\n\x10MessageType_Ping\
+    \n\x0emessages.proto\x12\x12hw.trezor.messages\x1a\roptions.proto*\xe3^\
+    \n\x0bMessageType\x12(\n\x16MessageType_Initialize\x10\0\x1a\x0c\xb0\xb5\
+    \x18\x01\x80\xa6\x1d\x01\x90\xb5\x18\x01\x12\x1e\n\x10MessageType_Ping\
     \x10\x01\x1a\x08\x80\xa6\x1d\x01\x90\xb5\x18\x01\x12%\n\x13MessageType_S\
     uccess\x10\x02\x1a\x0c\x80\xa6\x1d\x01\xa8\xb5\x18\x01\x98\xb5\x18\x01\
     \x12%\n\x13MessageType_Failure\x10\x03\x1a\x0c\x80\xa6\x1d\x01\xa8\xb5\
@@ -1680,8 +1722,8 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x01\x98\xb5\x18\x01\x12*\n\x1cMessageType_PinMatrixRequest\x10\x12\x1a\
     \x08\x80\xa6\x1d\x01\x98\xb5\x18\x01\x12.\n\x18MessageType_PinMatrixAck\
     \x10\x13\x1a\x10\xc0\xb5\x18\x01\xb0\xb5\x18\x01\x80\xa6\x1d\x01\x90\xb5\
-    \x18\x01\x12$\n\x12MessageType_Cancel\x10\x14\x1a\x0c\x80\xa6\x1d\x01\
-    \xb0\xb5\x18\x01\x90\xb5\x18\x01\x12$\n\x16MessageType_LockDevice\x10\
+    \x18\x01\x12$\n\x12MessageType_Cancel\x10\x14\x1a\x0c\xb0\xb5\x18\x01\
+    \x80\xa6\x1d\x01\x90\xb5\x18\x01\x12$\n\x16MessageType_LockDevice\x10\
     \x18\x1a\x08\x80\xa6\x1d\x01\x90\xb5\x18\x01\x12'\n\x19MessageType_Apply\
     Settings\x10\x19\x1a\x08\x80\xa6\x1d\x01\x90\xb5\x18\x01\x12'\n\x19Messa\
     geType_ButtonRequest\x10\x1a\x1a\x08\x80\xa6\x1d\x01\x98\xb5\x18\x01\x12\
@@ -1768,8 +1810,8 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x01\x98\xb5\x18\x01\x12-\n\x1fMessageType_PaymentNotification\x104\x1a\
     \x08\x80\xa6\x1d\x01\x90\xb5\x18\x01\x123\n\x1dMessageType_DebugLinkDeci\
     sion\x10d\x1a\x10\xc0\xb5\x18\x01\xb0\xb5\x18\x01\x80\xa6\x1d\x01\xa0\
-    \xb5\x18\x01\x12/\n\x1dMessageType_DebugLinkGetState\x10e\x1a\x0c\x80\
-    \xa6\x1d\x01\xb0\xb5\x18\x01\xa0\xb5\x18\x01\x12(\n\x1aMessageType_Debug\
+    \xb5\x18\x01\x12/\n\x1dMessageType_DebugLinkGetState\x10e\x1a\x0c\xb0\
+    \xb5\x18\x01\x80\xa6\x1d\x01\xa0\xb5\x18\x01\x12(\n\x1aMessageType_Debug\
     LinkState\x10f\x1a\x08\x80\xa6\x1d\x01\xa8\xb5\x18\x01\x12'\n\x19Message\
     Type_DebugLinkStop\x10g\x1a\x08\x80\xa6\x1d\x01\xa0\xb5\x18\x01\x12&\n\
     \x18MessageType_DebugLinkLog\x10h\x1a\x08\x80\xa6\x1d\x01\xa8\xb5\x18\
@@ -1960,16 +2002,24 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x1d\x01\x90\xb5\x18\x01\x124\n%MessageType_EvoluDelegatedIdentityKey\
     \x10\xb9\x10\x1a\x08\x80\xa6\x1d\x01\x98\xb5\x18\x01\x12%\n\x1aMessageTy\
     pe_TronGetAddress\x10\x98\x11\x1a\x04\x90\xb5\x18\x01\x12\"\n\x17Message\
-    Type_TronAddress\x10\x99\x11\x1a\x04\x98\xb5\x18\x01\x12)\n\x1eMessageTy\
-    pe_BenchmarkListNames\x10\x8cG\x1a\x04\x80\xa6\x1d\x01\x12%\n\x1aMessage\
-    Type_BenchmarkNames\x10\x8dG\x1a\x04\x80\xa6\x1d\x01\x12#\n\x18MessageTy\
-    pe_BenchmarkRun\x10\x8eG\x1a\x04\x80\xa6\x1d\x01\x12&\n\x1bMessageType_B\
-    enchmarkResult\x10\x8fG\x1a\x04\x80\xa6\x1d\x01\x1a\x08\xc8\xf3\x18\x01\
-    \xd0\xf3\x18\x01\"\x04\x08Z\x10\\\"\x04\x08G\x10J\"\x04\x08r\x10z\"\x05\
-    \x08{\x10\x95\x01\"\x06\x08\xdb\x01\x10\xdb\x01\"\x06\x08\xe0\x01\x10\
-    \xe0\x01\"\x06\x08\xac\x02\x10\xb0\x02\"\x06\x08\xb5\x02\x10\xb8\x02\"\
-    \x06\x08\xbc\x05\x10\xc5\x05\"\x06\x08\xe9\x07\x10\xf7\x07\"\x06\x08\xfa\
-    \x07\x10\xcb\x08B8\n#com.satoshilabs.trezor.lib.protobufB\rTrezorMessage\
+    Type_TronAddress\x10\x99\x11\x1a\x04\x98\xb5\x18\x01\x12%\n\x1aMessageTy\
+    pe_CashuBlindSign\x10\xfc\x11\x1a\x04\x90\xb5\x18\x01\x12-\n\"MessageTyp\
+    e_CashuBlindSignResponse\x10\xfd\x11\x1a\x04\x98\xb5\x18\x01\x12(\n\x1dM\
+    essageType_CashuVerifyProofs\x10\xfe\x11\x1a\x04\x90\xb5\x18\x01\x12&\n\
+    \x1bMessageType_CashuGetKeysets\x10\x80\x12\x1a\x04\x90\xb5\x18\x01\x12.\
+    \n#MessageType_CashuGetKeysetsResponse\x10\x81\x12\x1a\x04\x98\xb5\x18\
+    \x01\x12(\n\x1dMessageType_CashuRotateKeyset\x10\x82\x12\x1a\x04\x90\xb5\
+    \x18\x01\x120\n%MessageType_CashuRotateKeysetResponse\x10\x83\x12\x1a\
+    \x04\x98\xb5\x18\x01\x12)\n\x1eMessageType_BenchmarkListNames\x10\x8cG\
+    \x1a\x04\x80\xa6\x1d\x01\x12%\n\x1aMessageType_BenchmarkNames\x10\x8dG\
+    \x1a\x04\x80\xa6\x1d\x01\x12#\n\x18MessageType_BenchmarkRun\x10\x8eG\x1a\
+    \x04\x80\xa6\x1d\x01\x12&\n\x1bMessageType_BenchmarkResult\x10\x8fG\x1a\
+    \x04\x80\xa6\x1d\x01\x1a\x08\xc8\xf3\x18\x01\xd0\xf3\x18\x01\"\x04\x08Z\
+    \x10\\\"\x04\x08G\x10J\"\x04\x08r\x10z\"\x05\x08{\x10\x95\x01\"\x06\x08\
+    \xdb\x01\x10\xdb\x01\"\x06\x08\xe0\x01\x10\xe0\x01\"\x06\x08\xac\x02\x10\
+    \xb0\x02\"\x06\x08\xb5\x02\x10\xb8\x02\"\x06\x08\xbc\x05\x10\xc5\x05\"\
+    \x06\x08\xe9\x07\x10\xf7\x07\"\x06\x08\xfa\x07\x10\xcb\x08\"\x06\x08\xff\
+    \x11\x10\xff\x11B8\n#com.satoshilabs.trezor.lib.protobufB\rTrezorMessage\
     \x80\xa6\x1d\x01\
 ";
 

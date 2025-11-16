@@ -193,6 +193,36 @@ class CardanoTxWitnessType(IntEnum):
     SHELLEY_WITNESS = 1
 
 
+class Operation(IntEnum):
+    OPERATION_UNSPECIFIED = 0
+    OPERATION_MINT = 1
+    OPERATION_MELT = 2
+    OPERATION_SWAP = 3
+
+
+class CurrencyUnitType(IntEnum):
+    CURRENCY_UNIT_TYPE_UNSPECIFIED = 0
+    CURRENCY_UNIT_TYPE_SAT = 1
+    CURRENCY_UNIT_TYPE_MSAT = 2
+    CURRENCY_UNIT_TYPE_USD = 3
+    CURRENCY_UNIT_TYPE_EUR = 4
+    CURRENCY_UNIT_TYPE_AUTH = 5
+
+
+class CashuErrorCode(IntEnum):
+    ERROR_CODE_UNSPECIFIED = 0
+    ERROR_CODE_AMOUNT_OUTSIDE_LIMIT = 1
+    ERROR_CODE_DUPLICATE_INPUTS_PROVIDED = 2
+    ERROR_CODE_DUPLICATE_OUTPUTS_PROVIDED = 3
+    ERROR_CODE_KEYSET_NOT_KNOWN = 4
+    ERROR_CODE_KEYSET_INACTIVE = 5
+    ERROR_CODE_MINTING_DISABLED = 6
+    ERROR_CODE_COULD_NOT_ROTATE_KEYSET = 7
+    ERROR_CODE_INVALID_PROOF = 8
+    ERROR_CODE_INVALID_BLIND_MESSAGE = 9
+    ERROR_CODE_UNIT_NOT_SUPPORTED = 10
+
+
 class BackupType(IntEnum):
     Bip39 = 0
     Slip39_Basic = 1
@@ -684,6 +714,13 @@ class MessageType(IntEnum):
     EvoluDelegatedIdentityKey = 2105
     TronGetAddress = 2200
     TronAddress = 2201
+    CashuBlindSign = 2300
+    CashuBlindSignResponse = 2301
+    CashuVerifyProofs = 2302
+    CashuGetKeysets = 2304
+    CashuGetKeysetsResponse = 2305
+    CashuRotateKeyset = 2306
+    CashuRotateKeysetResponse = 2307
     BenchmarkListNames = 9100
     BenchmarkNames = 9101
     BenchmarkRun = 9102
@@ -2996,6 +3033,306 @@ class CardanoMessageSignature(protobuf.MessageType):
         self.signature = signature
         self.address = address
         self.pub_key = pub_key
+
+
+class BlindedMessage(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("amount", "uint64", repeated=False, required=True),
+        2: protobuf.Field("keyset_id", "bytes", repeated=False, required=True),
+        3: protobuf.Field("blinded_secret", "bytes", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        amount: "int",
+        keyset_id: "bytes",
+        blinded_secret: "bytes",
+    ) -> None:
+        self.amount = amount
+        self.keyset_id = keyset_id
+        self.blinded_secret = blinded_secret
+
+
+class SignatoryKeysets(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("pubkey", "bytes", repeated=False, required=True),
+        2: protobuf.Field("keysets", "KeySet", repeated=True, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        pubkey: "bytes",
+        keysets: Optional[Sequence["KeySet"]] = None,
+    ) -> None:
+        self.keysets: Sequence["KeySet"] = keysets if keysets is not None else []
+        self.pubkey = pubkey
+
+
+class KeySet(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("id", "bytes", repeated=False, required=True),
+        2: protobuf.Field("unit", "CurrencyUnit", repeated=False, required=True),
+        3: protobuf.Field("active", "bool", repeated=False, required=True),
+        4: protobuf.Field("input_fee_ppk", "uint64", repeated=False, required=True),
+        5: protobuf.Field("keys", "Keys", repeated=False, required=True),
+        6: protobuf.Field("final_expiry", "uint64", repeated=False, required=False, default=None),
+        7: protobuf.Field("version", "uint64", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        id: "bytes",
+        unit: "CurrencyUnit",
+        active: "bool",
+        input_fee_ppk: "int",
+        keys: "Keys",
+        version: "int",
+        final_expiry: Optional["int"] = None,
+    ) -> None:
+        self.id = id
+        self.unit = unit
+        self.active = active
+        self.input_fee_ppk = input_fee_ppk
+        self.keys = keys
+        self.version = version
+        self.final_expiry = final_expiry
+
+
+class Keys(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("keys", "KeysEntry", repeated=True, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        keys: Optional[Sequence["KeysEntry"]] = None,
+    ) -> None:
+        self.keys: Sequence["KeysEntry"] = keys if keys is not None else []
+
+
+class CurrencyUnit(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("unit", "CurrencyUnitType", repeated=False, required=False, default=None),
+        2: protobuf.Field("custom_unit", "string", repeated=False, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        unit: Optional["CurrencyUnitType"] = None,
+        custom_unit: Optional["str"] = None,
+    ) -> None:
+        self.unit = unit
+        self.custom_unit = custom_unit
+
+
+class Proofs(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("proof", "Proof", repeated=True, required=False, default=None),
+        3: protobuf.Field("operation", "Operation", repeated=False, required=True),
+        4: protobuf.Field("correlation_id", "string", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        operation: "Operation",
+        correlation_id: "str",
+        proof: Optional[Sequence["Proof"]] = None,
+    ) -> None:
+        self.proof: Sequence["Proof"] = proof if proof is not None else []
+        self.operation = operation
+        self.correlation_id = correlation_id
+
+
+class Proof(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("amount", "uint64", repeated=False, required=True),
+        2: protobuf.Field("keyset_id", "bytes", repeated=False, required=True),
+        3: protobuf.Field("secret", "bytes", repeated=False, required=True),
+        4: protobuf.Field("c", "bytes", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        amount: "int",
+        keyset_id: "bytes",
+        secret: "bytes",
+        c: "bytes",
+    ) -> None:
+        self.amount = amount
+        self.keyset_id = keyset_id
+        self.secret = secret
+        self.c = c
+
+
+class BlindSignature(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("amount", "uint64", repeated=False, required=True),
+        2: protobuf.Field("keyset_id", "bytes", repeated=False, required=True),
+        3: protobuf.Field("blinded_secret", "bytes", repeated=False, required=True),
+        4: protobuf.Field("dleq", "BlindSignatureDLEQ", repeated=False, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        amount: "int",
+        keyset_id: "bytes",
+        blinded_secret: "bytes",
+        dleq: Optional["BlindSignatureDLEQ"] = None,
+    ) -> None:
+        self.amount = amount
+        self.keyset_id = keyset_id
+        self.blinded_secret = blinded_secret
+        self.dleq = dleq
+
+
+class BlindSignatureDLEQ(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("e", "bytes", repeated=False, required=True),
+        2: protobuf.Field("s", "bytes", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        e: "bytes",
+        s: "bytes",
+    ) -> None:
+        self.e = e
+        self.s = s
+
+
+class CashuBlindSign(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 2300
+    FIELDS = {
+        1: protobuf.Field("blinded_messages", "BlindedMessage", repeated=True, required=False, default=None),
+        2: protobuf.Field("operation", "Operation", repeated=False, required=True),
+        3: protobuf.Field("correlation_id", "string", repeated=False, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        operation: "Operation",
+        blinded_messages: Optional[Sequence["BlindedMessage"]] = None,
+        correlation_id: Optional["str"] = None,
+    ) -> None:
+        self.blinded_messages: Sequence["BlindedMessage"] = blinded_messages if blinded_messages is not None else []
+        self.operation = operation
+        self.correlation_id = correlation_id
+
+
+class CashuBlindSignResponse(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 2301
+    FIELDS = {
+        1: protobuf.Field("sigs", "BlindSignature", repeated=True, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        sigs: Optional[Sequence["BlindSignature"]] = None,
+    ) -> None:
+        self.sigs: Sequence["BlindSignature"] = sigs if sigs is not None else []
+
+
+class CashuVerifyProofs(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 2302
+    FIELDS = {
+        1: protobuf.Field("proofs", "Proofs", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        proofs: "Proofs",
+    ) -> None:
+        self.proofs = proofs
+
+
+class CashuGetKeysets(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 2304
+
+
+class CashuGetKeysetsResponse(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 2305
+    FIELDS = {
+        1: protobuf.Field("keysets", "SignatoryKeysets", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        keysets: "SignatoryKeysets",
+    ) -> None:
+        self.keysets = keysets
+
+
+class CashuRotateKeyset(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 2306
+    FIELDS = {
+        1: protobuf.Field("unit", "CurrencyUnit", repeated=False, required=True),
+        2: protobuf.Field("input_fee_ppk", "uint64", repeated=False, required=True),
+        3: protobuf.Field("amounts", "uint64", repeated=True, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        unit: "CurrencyUnit",
+        input_fee_ppk: "int",
+        amounts: Optional[Sequence["int"]] = None,
+    ) -> None:
+        self.amounts: Sequence["int"] = amounts if amounts is not None else []
+        self.unit = unit
+        self.input_fee_ppk = input_fee_ppk
+
+
+class CashuRotateKeysetResponse(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 2307
+    FIELDS = {
+        1: protobuf.Field("keyset", "KeySet", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        keyset: "KeySet",
+    ) -> None:
+        self.keyset = keyset
+
+
+class KeysEntry(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("key", "uint64", repeated=False, required=False, default=None),
+        2: protobuf.Field("value", "bytes", repeated=False, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        key: Optional["int"] = None,
+        value: Optional["bytes"] = None,
+    ) -> None:
+        self.key = key
+        self.value = value
 
 
 class CipherKeyValue(protobuf.MessageType):

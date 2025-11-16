@@ -21,6 +21,7 @@
 
 #include "py/objstr.h"
 
+#include "vendor/trezor-crypto/bignum.h"
 #include "vendor/trezor-crypto/ecdsa.h"
 #include "vendor/trezor-crypto/secp256k1.h"
 
@@ -265,6 +266,56 @@ STATIC mp_obj_t mod_trezorcrypto_secp256k1_multiply(mp_obj_t secret_key,
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_trezorcrypto_secp256k1_multiply_obj,
                                  mod_trezorcrypto_secp256k1_multiply);
 
+/// def scalar_add(s1: AnyBytes, s2: AnyBytes) -> bytes:
+///     """
+///     Adds 2 scalar values defined by s1 and s2.
+///     """
+STATIC mp_obj_t mod_trezorcrypto_secp256k1_scalar_add(mp_obj_t s1, mp_obj_t s2) {
+  mp_buffer_info_t sk1 = {0}, sk2 = {0};
+  mp_get_buffer_raise(s1, &sk1, MP_BUFFER_READ);
+  mp_get_buffer_raise(s2, &sk2, MP_BUFFER_READ);
+  if (sk1.len != 32 || sk2.len != 32) {
+    mp_raise_ValueError(MP_ERROR_TEXT("Invalid length"));
+  }
+  bignum256 k1 = {0}, k2 = {0};
+  bn_read_be(sk1.buf, &k1);
+  bn_read_be(sk2.buf, &k2);
+
+  bn_addmod(&k1, &k2, &secp256k1.order);
+
+  vstr_t out = {0};
+  vstr_init_len(&out, 32);
+  bn_write_be(&k1, (uint8_t *)out.buf);
+  return mp_obj_new_str_from_vstr(&mp_type_bytes, &out);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_trezorcrypto_secp256k1_scalar_add_obj,
+                                 mod_trezorcrypto_secp256k1_scalar_add);
+
+/// def scalar_multiply(s1: AnyBytes, s2: AnyBytes) -> bytes:
+///     """
+///     Multiplies 2 scalar values defined by s1 and s2.
+///     """
+STATIC mp_obj_t mod_trezorcrypto_secp256k1_scalar_multiply(mp_obj_t s1, mp_obj_t s2) {
+  mp_buffer_info_t sk1 = {0}, sk2 = {0};
+  mp_get_buffer_raise(s1, &sk1, MP_BUFFER_READ);
+  mp_get_buffer_raise(s2, &sk2, MP_BUFFER_READ);
+  if (sk1.len != 32 || sk2.len != 32) {
+    mp_raise_ValueError(MP_ERROR_TEXT("Invalid length"));
+  }
+  bignum256 k1 = {0}, k2 = {0};
+  bn_read_be(sk1.buf, &k1);
+  bn_read_be(sk2.buf, &k2);
+
+  bn_multiply(&k1, &k2, &secp256k1.order);
+
+  vstr_t out = {0};
+  vstr_init_len(&out, 32);
+  bn_write_be(&k2, (uint8_t *)out.buf);
+  return mp_obj_new_str_from_vstr(&mp_type_bytes, &out);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(mod_trezorcrypto_secp256k1_scalar_multiply_obj,
+                                 mod_trezorcrypto_secp256k1_scalar_multiply);
+
 STATIC const mp_rom_map_elem_t mod_trezorcrypto_secp256k1_globals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_secp256k1)},
     {MP_ROM_QSTR(MP_QSTR_generate_secret),
@@ -279,6 +330,10 @@ STATIC const mp_rom_map_elem_t mod_trezorcrypto_secp256k1_globals_table[] = {
      MP_ROM_PTR(&mod_trezorcrypto_secp256k1_verify_recover_obj)},
     {MP_ROM_QSTR(MP_QSTR_multiply),
      MP_ROM_PTR(&mod_trezorcrypto_secp256k1_multiply_obj)},
+    {MP_ROM_QSTR(MP_QSTR_scalar_add),
+     MP_ROM_PTR(&mod_trezorcrypto_secp256k1_scalar_add_obj)},
+    {MP_ROM_QSTR(MP_QSTR_scalar_multiply),
+     MP_ROM_PTR(&mod_trezorcrypto_secp256k1_scalar_multiply_obj)},
 #if !BITCOIN_ONLY
     {MP_ROM_QSTR(MP_QSTR_CANONICAL_SIG_ETHEREUM),
      MP_ROM_INT(CANONICAL_SIG_ETHEREUM)},

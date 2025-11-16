@@ -35,6 +35,8 @@ if TYPE_CHECKING:
     from trezor.enums import CardanoTxOutputSerializationFormat  # noqa: F401
     from trezor.enums import CardanoTxSigningMode  # noqa: F401
     from trezor.enums import CardanoTxWitnessType  # noqa: F401
+    from trezor.enums import CashuErrorCode  # noqa: F401
+    from trezor.enums import CurrencyUnitType  # noqa: F401
     from trezor.enums import DebugButton  # noqa: F401
     from trezor.enums import DebugPhysicalButton  # noqa: F401
     from trezor.enums import DebugSwipeDirection  # noqa: F401
@@ -54,6 +56,7 @@ if TYPE_CHECKING:
     from trezor.enums import NEMModificationType  # noqa: F401
     from trezor.enums import NEMMosaicLevy  # noqa: F401
     from trezor.enums import NEMSupplyChangeType  # noqa: F401
+    from trezor.enums import Operation  # noqa: F401
     from trezor.enums import OutputScriptType  # noqa: F401
     from trezor.enums import PinMatrixRequestType  # noqa: F401
     from trezor.enums import RecoveryDeviceInputMethod  # noqa: F401
@@ -1859,6 +1862,284 @@ if TYPE_CHECKING:
 
         @classmethod
         def is_type_of(cls, msg: Any) -> TypeGuard["CardanoMessageSignature"]:
+            return isinstance(msg, cls)
+
+    class BlindedMessage(protobuf.MessageType):
+        amount: "int"
+        keyset_id: "AnyBytes"
+        blinded_secret: "AnyBytes"
+
+        def __init__(
+            self,
+            *,
+            amount: "int",
+            keyset_id: "AnyBytes",
+            blinded_secret: "AnyBytes",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["BlindedMessage"]:
+            return isinstance(msg, cls)
+
+    class SignatoryKeysets(protobuf.MessageType):
+        pubkey: "AnyBytes"
+        keysets: "list[KeySet]"
+
+        def __init__(
+            self,
+            *,
+            pubkey: "AnyBytes",
+            keysets: "list[KeySet] | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["SignatoryKeysets"]:
+            return isinstance(msg, cls)
+
+    class KeySet(protobuf.MessageType):
+        id: "AnyBytes"
+        unit: "CurrencyUnit"
+        active: "bool"
+        input_fee_ppk: "int"
+        keys: "Keys"
+        final_expiry: "int | None"
+        version: "int"
+
+        def __init__(
+            self,
+            *,
+            id: "AnyBytes",
+            unit: "CurrencyUnit",
+            active: "bool",
+            input_fee_ppk: "int",
+            keys: "Keys",
+            version: "int",
+            final_expiry: "int | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["KeySet"]:
+            return isinstance(msg, cls)
+
+    class Keys(protobuf.MessageType):
+        keys: "list[KeysEntry]"
+
+        def __init__(
+            self,
+            *,
+            keys: "list[KeysEntry] | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["Keys"]:
+            return isinstance(msg, cls)
+
+    class CurrencyUnit(protobuf.MessageType):
+        unit: "CurrencyUnitType | None"
+        custom_unit: "str | None"
+
+        def __init__(
+            self,
+            *,
+            unit: "CurrencyUnitType | None" = None,
+            custom_unit: "str | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CurrencyUnit"]:
+            return isinstance(msg, cls)
+
+    class Proofs(protobuf.MessageType):
+        proof: "list[Proof]"
+        operation: "Operation"
+        correlation_id: "str"
+
+        def __init__(
+            self,
+            *,
+            operation: "Operation",
+            correlation_id: "str",
+            proof: "list[Proof] | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["Proofs"]:
+            return isinstance(msg, cls)
+
+    class Proof(protobuf.MessageType):
+        amount: "int"
+        keyset_id: "AnyBytes"
+        secret: "AnyBytes"
+        c: "AnyBytes"
+
+        def __init__(
+            self,
+            *,
+            amount: "int",
+            keyset_id: "AnyBytes",
+            secret: "AnyBytes",
+            c: "AnyBytes",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["Proof"]:
+            return isinstance(msg, cls)
+
+    class BlindSignature(protobuf.MessageType):
+        amount: "int"
+        keyset_id: "AnyBytes"
+        blinded_secret: "AnyBytes"
+        dleq: "BlindSignatureDLEQ | None"
+
+        def __init__(
+            self,
+            *,
+            amount: "int",
+            keyset_id: "AnyBytes",
+            blinded_secret: "AnyBytes",
+            dleq: "BlindSignatureDLEQ | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["BlindSignature"]:
+            return isinstance(msg, cls)
+
+    class BlindSignatureDLEQ(protobuf.MessageType):
+        e: "AnyBytes"
+        s: "AnyBytes"
+
+        def __init__(
+            self,
+            *,
+            e: "AnyBytes",
+            s: "AnyBytes",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["BlindSignatureDLEQ"]:
+            return isinstance(msg, cls)
+
+    class CashuBlindSign(protobuf.MessageType):
+        blinded_messages: "list[BlindedMessage]"
+        operation: "Operation"
+        correlation_id: "str | None"
+
+        def __init__(
+            self,
+            *,
+            operation: "Operation",
+            blinded_messages: "list[BlindedMessage] | None" = None,
+            correlation_id: "str | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CashuBlindSign"]:
+            return isinstance(msg, cls)
+
+    class CashuBlindSignResponse(protobuf.MessageType):
+        sigs: "list[BlindSignature]"
+
+        def __init__(
+            self,
+            *,
+            sigs: "list[BlindSignature] | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CashuBlindSignResponse"]:
+            return isinstance(msg, cls)
+
+    class CashuVerifyProofs(protobuf.MessageType):
+        proofs: "Proofs"
+
+        def __init__(
+            self,
+            *,
+            proofs: "Proofs",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CashuVerifyProofs"]:
+            return isinstance(msg, cls)
+
+    class CashuGetKeysets(protobuf.MessageType):
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CashuGetKeysets"]:
+            return isinstance(msg, cls)
+
+    class CashuGetKeysetsResponse(protobuf.MessageType):
+        keysets: "SignatoryKeysets"
+
+        def __init__(
+            self,
+            *,
+            keysets: "SignatoryKeysets",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CashuGetKeysetsResponse"]:
+            return isinstance(msg, cls)
+
+    class CashuRotateKeyset(protobuf.MessageType):
+        unit: "CurrencyUnit"
+        input_fee_ppk: "int"
+        amounts: "list[int]"
+
+        def __init__(
+            self,
+            *,
+            unit: "CurrencyUnit",
+            input_fee_ppk: "int",
+            amounts: "list[int] | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CashuRotateKeyset"]:
+            return isinstance(msg, cls)
+
+    class CashuRotateKeysetResponse(protobuf.MessageType):
+        keyset: "KeySet"
+
+        def __init__(
+            self,
+            *,
+            keyset: "KeySet",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["CashuRotateKeysetResponse"]:
+            return isinstance(msg, cls)
+
+    class KeysEntry(protobuf.MessageType):
+        key: "int | None"
+        value: "AnyBytes | None"
+
+        def __init__(
+            self,
+            *,
+            key: "int | None" = None,
+            value: "AnyBytes | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: Any) -> TypeGuard["KeysEntry"]:
             return isinstance(msg, cls)
 
     class CipherKeyValue(protobuf.MessageType):

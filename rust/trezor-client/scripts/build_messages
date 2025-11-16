@@ -20,6 +20,7 @@ FEATURES = {
     "Ethereum": "ethereum",
     #
     "Cardano": "cardano",
+    "Cashu": "cashu",
     "EOS": "eos",
     "Evolu": "evolu",
     "Monero": "monero",

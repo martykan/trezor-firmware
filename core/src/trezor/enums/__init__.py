@@ -171,6 +171,33 @@ if TYPE_CHECKING:
         BYRON_WITNESS = 0
         SHELLEY_WITNESS = 1
 
+    class Operation(IntEnum):
+        OPERATION_UNSPECIFIED = 0
+        OPERATION_MINT = 1
+        OPERATION_MELT = 2
+        OPERATION_SWAP = 3
+
+    class CurrencyUnitType(IntEnum):
+        CURRENCY_UNIT_TYPE_UNSPECIFIED = 0
+        CURRENCY_UNIT_TYPE_SAT = 1
+        CURRENCY_UNIT_TYPE_MSAT = 2
+        CURRENCY_UNIT_TYPE_USD = 3
+        CURRENCY_UNIT_TYPE_EUR = 4
+        CURRENCY_UNIT_TYPE_AUTH = 5
+
+    class CashuErrorCode(IntEnum):
+        ERROR_CODE_UNSPECIFIED = 0
+        ERROR_CODE_AMOUNT_OUTSIDE_LIMIT = 1
+        ERROR_CODE_DUPLICATE_INPUTS_PROVIDED = 2
+        ERROR_CODE_DUPLICATE_OUTPUTS_PROVIDED = 3
+        ERROR_CODE_KEYSET_NOT_KNOWN = 4
+        ERROR_CODE_KEYSET_INACTIVE = 5
+        ERROR_CODE_MINTING_DISABLED = 6
+        ERROR_CODE_COULD_NOT_ROTATE_KEYSET = 7
+        ERROR_CODE_INVALID_PROOF = 8
+        ERROR_CODE_INVALID_BLIND_MESSAGE = 9
+        ERROR_CODE_UNIT_NOT_SUPPORTED = 10
+
     class BackupType(IntEnum):
         Bip39 = 0
         Slip39_Basic = 1
@@ -631,6 +658,13 @@ if TYPE_CHECKING:
         EvoluDelegatedIdentityKey = 2105
         TronGetAddress = 2200
         TronAddress = 2201
+        CashuBlindSign = 2300
+        CashuBlindSignResponse = 2301
+        CashuVerifyProofs = 2302
+        CashuGetKeysets = 2304
+        CashuGetKeysetsResponse = 2305
+        CashuRotateKeyset = 2306
+        CashuRotateKeysetResponse = 2307
         BenchmarkListNames = 9100
         BenchmarkNames = 9101
         BenchmarkRun = 9102

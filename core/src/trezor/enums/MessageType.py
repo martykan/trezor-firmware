@@ -269,3 +269,10 @@ if not utils.BITCOIN_ONLY:
     NostrEventSignature = 2004
     TronGetAddress = 2200
     TronAddress = 2201
+    CashuBlindSign = 2300
+    CashuBlindSignResponse = 2301
+    CashuVerifyProofs = 2302
+    CashuGetKeysets = 2304
+    CashuGetKeysetsResponse = 2305
+    CashuRotateKeyset = 2306
+    CashuRotateKeysetResponse = 2307

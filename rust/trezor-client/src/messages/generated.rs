@@ -156,6 +156,17 @@ trezor_message_impl! {
     CardanoMessageSignature => MessageType_CardanoMessageSignature,
 }
 
+#[cfg(feature = "cashu")]
+trezor_message_impl! {
+    CashuBlindSign => MessageType_CashuBlindSign,
+    CashuBlindSignResponse => MessageType_CashuBlindSignResponse,
+    CashuVerifyProofs => MessageType_CashuVerifyProofs,
+    CashuGetKeysets => MessageType_CashuGetKeysets,
+    CashuGetKeysetsResponse => MessageType_CashuGetKeysetsResponse,
+    CashuRotateKeyset => MessageType_CashuRotateKeyset,
+    CashuRotateKeysetResponse => MessageType_CashuRotateKeysetResponse,
+}
+
 #[cfg(feature = "eos")]
 trezor_message_impl! {
     EosGetPublicKey => MessageType_EosGetPublicKey,

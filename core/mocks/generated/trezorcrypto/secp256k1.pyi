@@ -54,3 +54,17 @@ def multiply(secret_key: AnyBytes, public_key: AnyBytes) -> bytes:
     Multiplies point defined by public_key with scalar defined by
     secret_key. Useful for ECDH.
     """
+
+
+# upymod/modtrezorcrypto/modtrezorcrypto-secp256k1.h
+def scalar_add(s1: AnyBytes, s2: AnyBytes) -> bytes:
+    """
+    Adds 2 scalar values defined by s1 and s2.
+    """
+
+
+# upymod/modtrezorcrypto/modtrezorcrypto-secp256k1.h
+def scalar_multiply(s1: AnyBytes, s2: AnyBytes) -> bytes:
+    """
+    Multiplies 2 scalar values defined by s1 and s2.
+    """
