@@ -27,6 +27,6 @@ async def get_keysets(
     return CashuGetKeysetsResponse(
         keysets=SignatoryKeysets(
             pubkey=pk,
-            keysets=get_default_keysets(keychain).values(),
+            keysets=get_default_keysets(keychain),
         )
     )

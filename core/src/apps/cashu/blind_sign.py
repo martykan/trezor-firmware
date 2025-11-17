@@ -22,13 +22,11 @@ async def blind_sign(msg: CashuBlindSign, keychain: Keychain) -> CashuBlindSignR
 
     def blind_sign_message(msg: BlindedMessage) -> BlindSignature:
         try:
-            keyset_idx = next(
-                idx for idx, ks in keysets.items() if ks.id == msg.keyset_id
-            )
+            keyset = next(ks for ks in keysets if ks.id == msg.keyset_id)
         except StopIteration:
             raise ValueError("No matching keyset found")
 
-        node = derive_sub_node(keychain, keyset_idx, msg.amount)
+        node = derive_sub_node(keychain, keyset.unit, msg.amount)
         double_blinded = sign_message(node.private_key(), msg.blinded_secret)
 
         return BlindSignature(

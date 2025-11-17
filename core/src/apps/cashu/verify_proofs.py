@@ -18,13 +18,11 @@ async def verify_proofs(msg: CashuVerifyProofs, keychain: Keychain) -> Success:
 
     for proof in msg.proofs.proof:
         try:
-            keyset_idx = next(
-                idx for idx, ks in keysets.items() if ks.id == proof.keyset_id
-            )
+            keyset = next(ks for ks in keysets if ks.id == proof.keyset_id)
         except StopIteration:
             raise ValueError("No matching keyset found")
 
-        node = derive_sub_node(keychain, keyset_idx, proof.amount)
+        node = derive_sub_node(keychain, keyset.unit, proof.amount)
         is_valid = verify_message(
             node.private_key(),
             proof.c,
