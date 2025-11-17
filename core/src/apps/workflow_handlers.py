@@ -127,13 +127,12 @@ def _find_message_handler_module(msg_type: int) -> str:
                 return "apps.nostr.sign_event"
 
         # cashu experimental app
-        if __debug__:
-            if msg_type == MessageType.CashuBlindSign:
-                return "apps.cashu.blind_sign"
-            if msg_type == MessageType.CashuVerifyProofs:
-                return "apps.cashu.verify_proofs"
-            if msg_type == MessageType.CashuGetKeysets:
-                return "apps.cashu.get_keysets"
+        if msg_type == MessageType.CashuBlindSign:
+            return "apps.cashu.blind_sign"
+        if msg_type == MessageType.CashuVerifyProofs:
+            return "apps.cashu.verify_proofs"
+        if msg_type == MessageType.CashuGetKeysets:
+            return "apps.cashu.get_keysets"
 
         if msg_type == MessageType.SetU2FCounter:
             return "apps.management.set_u2f_counter"
