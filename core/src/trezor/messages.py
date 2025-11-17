@@ -2032,12 +2032,14 @@ if TYPE_CHECKING:
         blinded_messages: "list[BlindedMessage]"
         operation: "Operation"
         correlation_id: "str | None"
+        keysets: "list[KeySet]"
 
         def __init__(
             self,
             *,
             operation: "Operation",
             blinded_messages: "list[BlindedMessage] | None" = None,
+            keysets: "list[KeySet] | None" = None,
             correlation_id: "str | None" = None,
         ) -> None:
             pass
@@ -2062,11 +2064,13 @@ if TYPE_CHECKING:
 
     class CashuVerifyProofs(protobuf.MessageType):
         proofs: "Proofs"
+        keysets: "list[KeySet]"
 
         def __init__(
             self,
             *,
             proofs: "Proofs",
+            keysets: "list[KeySet] | None" = None,
         ) -> None:
             pass
 

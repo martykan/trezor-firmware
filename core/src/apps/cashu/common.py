@@ -92,7 +92,7 @@ def get_default_keysets(keychain: Keychain) -> dict[int, KeySet]:
         get_keyset(
             keychain=keychain,
             currency=CurrencyUnit(unit=currency_type),
-            max_order=8,
+            max_order=10,
         )
         for currency_type in ENABLED_CURRENCIES
     ]

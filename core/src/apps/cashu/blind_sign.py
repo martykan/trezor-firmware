@@ -18,7 +18,11 @@ async def blind_sign(msg: CashuBlindSign, keychain: Keychain) -> CashuBlindSignR
     from .common import get_default_keysets, derive_sub_node
     from .crypto import sign_message, calculate_dleq
 
-    keysets = get_default_keysets(keychain)
+    keysets = (
+        get_default_keysets(keychain)
+        if msg.keysets is None or len(msg.keysets) == 0
+        else msg.keysets
+    )
 
     def blind_sign_message(msg: BlindedMessage) -> BlindSignature:
         try:
@@ -27,6 +31,14 @@ async def blind_sign(msg: CashuBlindSign, keychain: Keychain) -> CashuBlindSignR
             raise ValueError("No matching keyset found")
 
         node = derive_sub_node(keychain, keyset.unit, msg.amount)
+        try:
+            ks_public_key = next(
+                (ke.value for ke in keyset.keys.keys if ke.key == msg.amount)
+            )
+        except StopIteration:
+            raise ValueError("Amount mismatch")
+        if ks_public_key != node.public_key():
+            raise ValueError("Key mismatch")
         double_blinded = sign_message(node.private_key(), msg.blinded_secret)
 
         return BlindSignature(

@@ -105,6 +105,7 @@ message CashuBlindSign {
   repeated BlindedMessage blinded_messages = 1;
   required Operation operation = 2;
   optional string correlation_id = 3;
+  repeated KeySet keysets = 4;
 }
 
 /**
@@ -123,6 +124,7 @@ message CashuBlindSignResponse {
  */
 message CashuVerifyProofs {
     required Proofs proofs = 1;
+    repeated KeySet keysets = 2;
 }
 
 /**

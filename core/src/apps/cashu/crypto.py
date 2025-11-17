@@ -62,7 +62,6 @@ def calculate_dleq(
     from trezor.crypto.hashlib import sha256
     from trezor.crypto.curve import secp256k1
 
-    from trezor import log
     from ubinascii import hexlify
 
     # Random nonce

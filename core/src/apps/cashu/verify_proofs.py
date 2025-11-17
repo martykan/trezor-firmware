@@ -14,8 +14,11 @@ async def verify_proofs(msg: CashuVerifyProofs, keychain: Keychain) -> Success:
     from .common import get_default_keysets, derive_sub_node
     from .crypto import verify_message
 
-    keysets = get_default_keysets(keychain)
-
+    keysets = (
+        get_default_keysets(keychain)
+        if msg.keysets is None or len(msg.keysets) == 0
+        else msg.keysets
+    )
     for proof in msg.proofs.proof:
         try:
             keyset = next(ks for ks in keysets if ks.id == proof.keyset_id)
@@ -23,6 +26,15 @@ async def verify_proofs(msg: CashuVerifyProofs, keychain: Keychain) -> Success:
             raise ValueError("No matching keyset found")
 
         node = derive_sub_node(keychain, keyset.unit, proof.amount)
+        try:
+            ks_public_key = next(
+                (ke.value for ke in keyset.keys.keys if ke.key == proof.amount)
+            )
+        except StopIteration:
+            raise ValueError("Amount mismatch verify")
+        if ks_public_key != node.public_key():
+            raise ValueError("Key mismatch verify")
+
         is_valid = verify_message(
             node.private_key(),
             proof.c,

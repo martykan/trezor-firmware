@@ -3224,6 +3224,7 @@ class CashuBlindSign(protobuf.MessageType):
         1: protobuf.Field("blinded_messages", "BlindedMessage", repeated=True, required=False, default=None),
         2: protobuf.Field("operation", "Operation", repeated=False, required=True),
         3: protobuf.Field("correlation_id", "string", repeated=False, required=False, default=None),
+        4: protobuf.Field("keysets", "KeySet", repeated=True, required=False, default=None),
     }
 
     def __init__(
@@ -3231,9 +3232,11 @@ class CashuBlindSign(protobuf.MessageType):
         *,
         operation: "Operation",
         blinded_messages: Optional[Sequence["BlindedMessage"]] = None,
+        keysets: Optional[Sequence["KeySet"]] = None,
         correlation_id: Optional["str"] = None,
     ) -> None:
         self.blinded_messages: Sequence["BlindedMessage"] = blinded_messages if blinded_messages is not None else []
+        self.keysets: Sequence["KeySet"] = keysets if keysets is not None else []
         self.operation = operation
         self.correlation_id = correlation_id
 
@@ -3256,13 +3259,16 @@ class CashuVerifyProofs(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 2302
     FIELDS = {
         1: protobuf.Field("proofs", "Proofs", repeated=False, required=True),
+        2: protobuf.Field("keysets", "KeySet", repeated=True, required=False, default=None),
     }
 
     def __init__(
         self,
         *,
         proofs: "Proofs",
+        keysets: Optional[Sequence["KeySet"]] = None,
     ) -> None:
+        self.keysets: Sequence["KeySet"] = keysets if keysets is not None else []
         self.proofs = proofs
 
 
